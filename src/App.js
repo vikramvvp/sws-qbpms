@@ -1,21 +1,35 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+var React = require('react');
+var ReactRouter = require('react-router-dom');
 
-class App extends Component {
+var Router = ReactRouter.BrowserRouter;
+var Route = ReactRouter.Route;
+var Switch = ReactRouter.Switch;
+
+var Nav = require('./Nav');
+var Home = require('./Home');
+var QBank = require('./QBank');
+var QPaper = require('./QPaper');
+var QPGenerate = require('./QPGenerate');
+
+class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+      <Router>
+        <div className='container'>
+          <Nav />
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route exact path='/qbank' component={QBank} />
+            <Route exact path='/qpaper' component={QPaper} />            
+            <Route path='/qpaper/generate' component={QPGenerate} />
+            <Route render={function () {
+              return (<p>Not Found!</p>)
+            }} />
+          </Switch>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
+      </Router> 
+    )
   }
 }
 
-export default App;
+module.exports = App;
