@@ -1,16 +1,17 @@
-var React = require('react');
-var Link = require('react-router-dom').Link
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Table, Button,ButtonGroup,ButtonToolbar } from 'react-bootstrap';
 
 let userName = "someuser";
 let templinksMatrix = [
-  { classTitle: "6th", subjects: ["English", "Maths", "History", "Geography"] },
+  { classTitle: "6th", subjects: ["English", "Maths", "History", "Geography", ] },
   { classTitle: "7th", subjects: ["English", "Maths", "History", "Geography"] },
   { classTitle: "8th", subjects: ["English", "Maths", "History", "Geography"] },
   { classTitle: "9th", subjects: ["English", "History", "Geography"] },
   { classTitle: "10th", subjects: ["History", "Geography"] }
 ];
 
-class Home extends React.Component {
+export default class Home extends React.Component {
   state = {
     linksMatrix:  [] 
   }
@@ -32,8 +33,8 @@ class Home extends React.Component {
 
     return (
       <div className='home-container' >
-        <h1>Welcome home! Select action from the matrix.</h1>
-        <table>
+        <h3>Welcome! Select action from the matrix.</h3>
+        <Table responsive>
         <thead>
         <tr key='header'>
           <td key='classTitle'>Class</td>
@@ -49,27 +50,28 @@ class Home extends React.Component {
             {subjects.map((subject) => (
               (classRow.subjects.indexOf(subject) !== -1) ?
                 <td key={subject}>
-                  <span>
-                    <Link
-                      className='button'
-                      to={{
-                        pathname: '/qbank',
-                        search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
-                      }}>
-                      QBank
-                    </Link>
-                  </span>
-                  <br/>
-                  <span>
-                    <Link
-                      className='button'
-                      to={{
-                        pathname: '/qpaper',
-                        search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
-                      }}>
-                      QPaper
-                    </Link>
-                  </span>
+                  <ButtonToolbar>
+                  <ButtonGroup bsSize="small">
+                    <Button>
+                      <Link 
+                        to={{
+                          pathname: '/qbank',
+                          search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
+                        }}>
+                        QBank
+                      </Link>
+                    </Button>
+                    <Button>
+                      <Link 
+                        to={{
+                          pathname: '/qpaper',
+                          search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
+                        }}>
+                        QPaper
+                      </Link>
+                    </Button>
+                  </ButtonGroup>
+                  </ButtonToolbar>
                 </td>
                 : 
                 <td key={subject}><span></span></td>
@@ -78,10 +80,8 @@ class Home extends React.Component {
           </tr>
         ))}
         </tbody>
-        </table>
+        </Table>
       </div>
     )
   }
 }
-
-module.exports = Home;
