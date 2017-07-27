@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Table, Button, ButtonGroup,ButtonToolbar } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { connect } from "react-redux";
@@ -24,7 +23,6 @@ class Home extends React.Component {
     // })
     //this.setState({classSubjectsList: tempclassSubjectsList});
     this.props.fetchClassSubjectsList();
-    console.log(this.props.classSubjectsList);
   }
   render() {
     if (this.props.classSubjectsList === null) {
