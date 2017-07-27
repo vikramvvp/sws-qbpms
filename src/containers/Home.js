@@ -1,32 +1,41 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Button,ButtonGroup,ButtonToolbar } from 'react-bootstrap';
+import { Table, Button, ButtonGroup,ButtonToolbar } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { connect } from "react-redux";
+import { fetchClassSubjectsList } from "../actions";
 
 let userName = "someuser";
-let templinksMatrix = [
-  { classTitle: "6th", subjects: ["English", "Maths", "History", "Geography", ] },
-  { classTitle: "7th", subjects: ["English", "Maths", "History", "Geography"] },
-  { classTitle: "8th", subjects: ["English", "Maths", "History", "Geography"] },
-  { classTitle: "9th", subjects: ["English", "History", "Geography"] },
-  { classTitle: "10th", subjects: ["History", "Geography"] }
-];
+// let tempclassSubjectsList = [
+//   { classTitle: "6th", subjects: ["English", "Maths", "History", "Geography", ] },
+//   { classTitle: "7th", subjects: ["English", "Maths", "History", "Geography"] },
+//   { classTitle: "8th", subjects: ["English", "Maths", "History", "Geography"] },
+//   { classTitle: "9th", subjects: ["English", "History", "Geography"] },
+//   { classTitle: "10th", subjects: ["History", "Geography"] }
+// ];
 
-export default class Home extends React.Component {
-  state = {
-    linksMatrix:  [] 
-  }
+class Home extends React.Component {
+  // state = {
+  //   classSubjectsList:  [] 
+  // }
   componentDidMount() {
-    // UserAPI.getLinksMatrix().then((linksMatrix) => {
-    //   this.setState({linksMatrix})
+    // UserAPI.getclassSubjectsList().then((classSubjectsList) => {
+    //   this.setState({classSubjectsList})
     // })
-    this.setState({linksMatrix: templinksMatrix});
+    //this.setState({classSubjectsList: tempclassSubjectsList});
+    this.props.fetchClassSubjectsList();
+    console.log(this.props.classSubjectsList);
   }
   render() {
+    if (this.props.classSubjectsList === null) {
+      return <div>Loading...</div>
+    }
+
     let subjects = [];
-    for (let i=0;i<this.state.linksMatrix.length;i++) {
-      for (let j=0;j<this.state.linksMatrix[i].subjects.length;j++) {
-        if(subjects.indexOf(this.state.linksMatrix[i].subjects[j]) === -1) {
-          subjects.push(this.state.linksMatrix[i].subjects[j])
+    for (let i=0;i<this.props.classSubjectsList.length;i++) {
+      for (let j=0;j<this.props.classSubjectsList[i].subjects.length;j++) {
+        if(subjects.indexOf(this.props.classSubjectsList[i].subjects[j]) === -1) {
+          subjects.push(this.props.classSubjectsList[i].subjects[j])
         } 
       }
     }
@@ -44,7 +53,7 @@ export default class Home extends React.Component {
         </tr>
         </thead>
         <tbody>
-        {this.state.linksMatrix.map((classRow) => (
+        {this.props.classSubjectsList.map((classRow) => (
           <tr key={classRow.classTitle}>
             <td key={classRow.classTitle}><span>{classRow.classTitle}</span></td>
             {subjects.map((subject) => (
@@ -52,24 +61,19 @@ export default class Home extends React.Component {
                 <td key={subject}>
                   <ButtonToolbar>
                   <ButtonGroup bsSize="small">
-                    <Button>
-                      <Link 
-                        to={{
-                          pathname: '/qbank',
-                          search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
-                        }}>
-                        QBank
-                      </Link>
-                    </Button>
-                    <Button>
-                      <Link 
-                        to={{
-                          pathname: '/qpaper',
-                          search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
-                        }}>
-                        QPaper
-                      </Link>
-                    </Button>
+                    <LinkContainer to={{
+                      pathname: '/qbank',
+                      search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
+                    }}>
+                    <Button>QBank</Button>
+                    </LinkContainer>
+                    <LinkContainer 
+                      to={{
+                        pathname: '/qpaper',
+                        search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
+                      }}>
+                      <Button>QPaper</Button>
+                    </LinkContainer>
                   </ButtonGroup>
                   </ButtonToolbar>
                 </td>
@@ -85,3 +89,9 @@ export default class Home extends React.Component {
     )
   }
 }
+
+function mapStateToProps(state) {
+  return { classSubjectsList: state.classSubjectsList };
+}
+
+export default connect(mapStateToProps, { fetchClassSubjectsList })(Home);
