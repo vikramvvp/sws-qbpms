@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import { Table, Button, ButtonGroup,ButtonToolbar } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { connect } from "react-redux";
@@ -29,14 +30,16 @@ class Home extends React.Component {
       return <div>Loading...</div>
     }
 
-    let subjects = [];
-    for (let i=0;i<this.props.classSubjectsList.length;i++) {
-      for (let j=0;j<this.props.classSubjectsList[i].subjects.length;j++) {
-        if(subjects.indexOf(this.props.classSubjectsList[i].subjects[j]) === -1) {
-          subjects.push(this.props.classSubjectsList[i].subjects[j])
-        } 
-      }
-    }
+    const subjects = _.union(_.flattenDeep(this.props.classSubjectsList.map((cs)=>{return cs.subjects})))
+
+    // let subjects = [];
+    // for (let i=0;i<this.props.classSubjectsList.length;i++) {
+    //   for (let j=0;j<this.props.classSubjectsList[i].subjects.length;j++) {
+    //     if(subjects.indexOf(this.props.classSubjectsList[i].subjects[j]) === -1) {
+    //       subjects.push(this.props.classSubjectsList[i].subjects[j])
+    //     } 
+    //   }
+    // }
 
     return (
       <div className='home-container' >
@@ -56,7 +59,7 @@ class Home extends React.Component {
             <td key={classRow.classTitle}><span>{classRow.classTitle}</span></td>
             {subjects.map((subject) => (
               (classRow.subjects.indexOf(subject) !== -1) ?
-                <td key={subject}>
+                (<td key={subject}>
                   <ButtonToolbar>
                   <ButtonGroup bsSize="small">
                     <LinkContainer to={{
@@ -74,9 +77,10 @@ class Home extends React.Component {
                     </LinkContainer>
                   </ButtonGroup>
                   </ButtonToolbar>
-                </td>
+                </td>)
                 : 
-                <td key={subject}><span></span></td>
+                // subject not being taught for that class
+                (<td key={subject}><span></span></td>)
               )
             )}
           </tr>
