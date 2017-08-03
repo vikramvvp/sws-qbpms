@@ -5,24 +5,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { connect } from "react-redux";
 import { fetchClassSubjectsList } from "../actions";
 
-let userName = "someuser";
-// let tempclassSubjectsList = [
-//   { classTitle: "6th", subjects: ["English", "Maths", "History", "Geography", ] },
-//   { classTitle: "7th", subjects: ["English", "Maths", "History", "Geography"] },
-//   { classTitle: "8th", subjects: ["English", "Maths", "History", "Geography"] },
-//   { classTitle: "9th", subjects: ["English", "History", "Geography"] },
-//   { classTitle: "10th", subjects: ["History", "Geography"] }
-// ];
-
 class Home extends React.Component {
-  // state = {
-  //   classSubjectsList:  [] 
-  // }
   componentDidMount() {
-    // UserAPI.getclassSubjectsList().then((classSubjectsList) => {
-    //   this.setState({classSubjectsList})
-    // })
-    //this.setState({classSubjectsList: tempclassSubjectsList});
     this.props.fetchClassSubjectsList();
   }
   render() {
@@ -31,15 +15,6 @@ class Home extends React.Component {
     }
 
     const subjects = _.union(_.flattenDeep(this.props.classSubjectsList.map((cs)=>{return cs.subjects})))
-
-    // let subjects = [];
-    // for (let i=0;i<this.props.classSubjectsList.length;i++) {
-    //   for (let j=0;j<this.props.classSubjectsList[i].subjects.length;j++) {
-    //     if(subjects.indexOf(this.props.classSubjectsList[i].subjects[j]) === -1) {
-    //       subjects.push(this.props.classSubjectsList[i].subjects[j])
-    //     } 
-    //   }
-    // }
 
     return (
       <div className='home-container' >
@@ -57,21 +32,22 @@ class Home extends React.Component {
         {this.props.classSubjectsList.map((classRow) => (
           <tr key={classRow.classTitle}>
             <td key={classRow.classTitle}><span>{classRow.classTitle}</span></td>
-            {subjects.map((subject) => (
-              (classRow.subjects.indexOf(subject) !== -1) ?
+            {subjects.map((subject) => {
+              const searchTerm = `?username=${this.props.user.name}&classtitle=${classRow.classTitle}&subject=${subject}`;
+              return (classRow.subjects.indexOf(subject) !== -1) ?
                 (<td key={subject}>
                   <ButtonToolbar>
                   <ButtonGroup bsSize="small">
                     <LinkContainer to={{
                       pathname: '/qbank',
-                      search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
+                      search: searchTerm
                     }}>
                     <Button>QBank</Button>
                     </LinkContainer>
                     <LinkContainer 
                       to={{
                         pathname: '/qpaper',
-                        search: '?username=' + userName + '&classtitle=' + classRow.classTitle + '&subject=' + subject
+                        search: searchTerm
                       }}>
                       <Button>QPaper</Button>
                     </LinkContainer>
@@ -81,7 +57,7 @@ class Home extends React.Component {
                 : 
                 // subject not being taught for that class
                 (<td key={subject}><span></span></td>)
-              )
+            }
             )}
           </tr>
         ))}
@@ -93,7 +69,10 @@ class Home extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return { classSubjectsList: state.classSubjectsList };
+  return { 
+    classSubjectsList: state.classSubjectsList,
+    user: state.user
+   };
 }
 
 export default connect(mapStateToProps, { fetchClassSubjectsList })(Home);
